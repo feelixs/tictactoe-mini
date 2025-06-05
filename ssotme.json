@@ -1,0 +1,33 @@
+{
+  "ShowHidden": false,
+  "ShowAllFiles": false,
+  "Name": "tictactoe-mini",
+  "ProjectSettings": [
+    {
+      "Name": "project-name",
+      "Value": "tictactoe-mini"
+    }
+  ],
+  "ProjectTranspilers": [
+    {
+      "MatchedTranspiler": {
+        "Name": "AirtableToODXML",
+        "Description": "Airtable to Odxml"
+      },
+      "IsSSoTTranspiler": false,
+      "Name": "AirtableToODXML",
+      "RelativePath": "/ODXML",
+      "CommandLine": "airtable/airtable-to-odxml -p baseId=appWRZKTMAlzfzenD"
+    },
+    {
+      "MatchedTranspiler": {
+        "Name": "ODXMLToDotNetSDK",
+        "Description": "ODXML-To-DotNet-SDK"
+      },
+      "IsSSoTTranspiler": false,
+      "Name": "ODXMLToDotNetSDK",
+      "RelativePath": "/dotnet",
+      "CommandLine": "odxml-to-dotnetsdk -i ../ODXML/DataSchema.odxml"
+    }
+  ]
+}

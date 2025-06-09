@@ -11,13 +11,13 @@
   "ProjectTranspilers": [
     {
       "MatchedTranspiler": {
-        "Name": "BaserowToODXML",
-        "Description": "Baserow to Odxml"
+        "Name": "AirtableToODXML",
+        "Description": "Airtable to Odxml"
       },
       "IsSSoTTranspiler": false,
-      "Name": "BaserowToODXML",
+      "Name": "AirtableToODXML",
       "RelativePath": "/ODXML",
-      "CommandLine": "baserow/baserow-to-odxml -p baseId=237664"
+      "CommandLine": "airtable/airtable-to-odxml -p baseId=appWRZKTMAlzfzenD"
     },
     {
       "MatchedTranspiler": {

@@ -24,7 +24,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          PR_BODY=$(echo -e '${{ github.event.pull_request.body }}')
+          echo -e '${{ github.event.pull_request.body }}' > "notes.txt"
           if [ -z "$PR_BODY" ]; then
             PR_BODY="No description provided"
           fi
@@ -55,9 +55,7 @@ jobs:
         run: |
           gh release create ${{ steps.version.outputs.version }} \
             --title "Release ${{ steps.version.outputs.version }}" \
-            --notes "Automated release from ${{ github.ref_name }} branch
-
-                    ${{ steps.pr_info.outputs.description }}" \
+            --notes-file notes.txt \
             --target ${{ github.sha }} \
             --prerelease
 

@@ -1,0 +1,18 @@
+{
+  "name": "ssotme",
+  "version": "2025.06.16",
+  "dotnet": "8.0.410",
+  "description": "",
+  "bin": {
+    "ssotme": "cli.js",
+    "aicapture": "cli.js",
+    "aic": "cli.js"
+  },
+  "scripts": {
+    "build": "dotnet build SSoTme-OST-CLI.sln --configuration Release",
+    "start": "node cli.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "GNU"
+}

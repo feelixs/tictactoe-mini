@@ -1,0 +1,76 @@
+name: Release
+on:
+  pull_request:
+    types: [closed]
+    branches: [ "main" ]
+
+jobs:
+
+  # Upload the package files from ./release/* to the GitHub Release
+  release:
+    name: Publish Package
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == true
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Get PR Description
+        id: pr_info
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          PR_BODY="""${{ github.event.pull_request.body }}"""
+          if [ -z "$PR_BODY" ]; then
+            PR_BODY="No description provided"
+          fi
+          echo "description<<EOF" >> $GITHUB_OUTPUT
+          echo "$PR_BODY" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Fetch Package Version
+        id: version
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          echo "version=v$VERSION" >> $GITHUB_OUTPUT
+          git fetch --tags
+          if git tag -l | grep -q "^v$VERSION$"; then
+            echo "Tag v$VERSION already exists, skipping release"
+            echo "skip=true" >> $GITHUB_OUTPUT
+          else
+            git tag "v$VERSION"
+            git push origin "v$VERSION"
+            echo "skip=false" >> $GITHUB_OUTPUT
+          fi
+
+      # Create initial pre-release
+      - name: Create Pre-Release
+        if: steps.version.outputs.skip == 'false'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create ${{ steps.version.outputs.version }} \
+            --title "Release ${{ steps.version.outputs.version }}" \
+            --notes "Automated release from ${{ github.ref_name }} branch
+
+                    ${{ steps.pr_info.outputs.description }}" \
+            --target ${{ github.sha }} \
+            --prerelease
+
+      # Upload installers as release assets
+      - name: Upload Installers to Release
+        if: steps.version.outputs.skip == 'false'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh release upload ${{ steps.version.outputs.version }} ./release/*
+
+      # Convert pre-release to latest release
+      - name: Mark as Latest Release
+        if: steps.version.outputs.skip == 'false'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh release edit ${{ steps.version.outputs.version }} --prerelease=false --latest
